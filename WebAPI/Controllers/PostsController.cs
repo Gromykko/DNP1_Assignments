@@ -4,6 +4,7 @@ using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.Controllers
 {
@@ -52,21 +53,21 @@ namespace WebAPI.Controllers
             return Ok(PostToGet);
         }
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetPosts([FromQuery] string? titleContains = null, [FromQuery] int? writtenById = null, [FromQuery] string? writtenByName = null)
+        public async Task<ActionResult<IEnumerable<Post>>> GetPosts([FromQuery] string? titleContains = null, [FromQuery] int? writtenById = null, [FromQuery] string? writtenByName = null)
         {
-            IEnumerable<Post> posts = PostRepo.GetMany();
+            IQueryable<Post> posts = PostRepo.GetMany();
             
-            if (titleContains!=null)
+            if (titleContains != null)
             {
-                posts = posts.Where(p => p.Title.Contains(titleContains));
+                posts = posts.Where(p => p.Title != null && p.Title.Contains(titleContains));
             }
 
-            if (writtenById!=null)
+            if (writtenById != null)
             {
                 posts = posts.Where(p => p.UserId == writtenById);
             }
 
-            if (writtenByName!=null)
+            if (writtenByName != null)
             {
                 var userIds = userRepository.GetMany()
                     .Where(u => u.Username.Equals(writtenByName))
@@ -74,7 +75,7 @@ namespace WebAPI.Controllers
                 posts = posts.Where(p => userIds.Contains(p.UserId));
             }
 
-            return Ok(posts.ToList());
+            return Ok(await posts.ToListAsync());
         }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Post>> DeletePost([FromRoute] int id)

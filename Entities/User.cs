@@ -4,6 +4,7 @@ namespace Entities;
 
 public class User
 {
+    private User(){}
     public User(string userName, string password)
     {
         Username = userName;

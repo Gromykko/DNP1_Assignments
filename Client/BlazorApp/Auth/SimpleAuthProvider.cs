@@ -48,7 +48,7 @@ public class SimpleAuthProvider : AuthenticationStateProvider
     }
 
 
-    public async Task Login(string userName, string password)
+    public async Task<UserDto> Login(string userName, string password)
     {
         HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             "auth/login",
@@ -67,6 +67,8 @@ public class SimpleAuthProvider : AuthenticationStateProvider
         string serialisedData = JsonSerializer.Serialize(userDto);
         await jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
 
+        
+
 
         List<Claim> claims = new List<Claim>()
      {
@@ -80,6 +82,7 @@ public class SimpleAuthProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(
             Task.FromResult(new AuthenticationState(currentClaimsPrincipal))
         );
+        return userDto;
     }
     public async Task Logout()
     {

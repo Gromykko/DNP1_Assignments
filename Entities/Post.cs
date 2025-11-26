@@ -11,8 +11,11 @@ public class Post
         UserId = userId;
     }
 
+    private Post(){}
+
     public int Id { get; set; }
     public string? Title { get; set; }
     public string? Body { get; set; }
+    public User user {get;set;}=null!;
     public int UserId { get; set; }
 }

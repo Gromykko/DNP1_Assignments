@@ -3,6 +3,7 @@ using ApiContracts;
 using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers
@@ -77,21 +78,14 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<User>>> GetUsers([FromQuery] string? usernameContains = null)
         {
-            IEnumerable<User> users = userRepo.GetMany();
-            if (usernameContains != null)
-            {
-                users = users.Where(u => u.Username.Contains(usernameContains));
-            }
-            List<UserDto> dtoUsers=new();
-            foreach (User user in users)
-            {
-                dtoUsers.Add(new UserDto
-                {
-                    Id = user.Id,
-                    UserName = user.Username
-                });
-            }
-            return Ok(dtoUsers);
+            IList<User> users = await userRepo.GetMany()
+         .Where(
+             u => usernameContains == null ||
+                  u.Username.ToLower().Contains(usernameContains.ToLower())
+         ).ToListAsync();
+
+            return Ok(users);
+
         }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<User>> DeleteUser([FromRoute] int id)

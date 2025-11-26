@@ -1,5 +1,6 @@
 @page "/login"
 @using BlazorApp.Auth
+@using System.Security.Claims
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager navMgr
 
@@ -36,7 +37,7 @@
         errorLabel = "";
         try
         {
-            await ((SimpleAuthProvider)AuthProvider).Login(userName, password);
+            var user = await ((SimpleAuthProvider)AuthProvider).Login(userName, password);
             navMgr.NavigateTo("/");
         }
         catch (Exception e)

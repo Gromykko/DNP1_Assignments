@@ -19,7 +19,10 @@ builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+    });
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

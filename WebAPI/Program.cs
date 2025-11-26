@@ -1,3 +1,4 @@
+using EfcRepositories;
 using FileRepositories;
 using LearnWebAPI.Middlewares;
 using RepositoryContracts;
@@ -13,9 +14,10 @@ builder.Services.AddOpenApi();
 //         c.SwaggerDoc("v1", new OpenApiInfo { Title = "LearnWebAPI", Version = "v1" });
 //     });;
 
-builder.Services.AddScoped<IPostRepository, PostFileRepository>();
-builder.Services.AddScoped<IUserRepository, UserFileRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentFileRepository>();
+builder.Services.AddScoped<IPostRepository, EfcPostRepository>();
+builder.Services.AddScoped<IUserRepository, EfcUserRepository>();
+builder.Services.AddScoped<ICommentRepository, EfcCommentRepository>();
+builder.Services.AddDbContext<EfcRepositories.AppContext>();
 
 var app = builder.Build();
 

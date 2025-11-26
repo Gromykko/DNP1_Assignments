@@ -4,6 +4,7 @@ using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.Controllers
 {
@@ -25,7 +26,7 @@ namespace WebAPI.Controllers
         {
             Comment Comment = new(request.PostId, request.UserId, request.Body);
             Comment created = await CommentRepo.AddAsync(Comment);
-            
+
             return Created($"/Comments/{created.Id}", created);
         }
 
@@ -46,29 +47,29 @@ namespace WebAPI.Controllers
             return Ok(CommentToGet);
         }
         [HttpGet]
-        public async Task<ActionResult<List<Comment>>> GetComments([FromQuery] int? writtenById = null, [FromQuery] string? writtenByName = null, [FromQuery] int? postId = null)
+        public async Task<ActionResult<IEnumerable<Comment>>> GetComments([FromQuery] int? writtenById = null, [FromQuery] string? writtenByName = null, [FromQuery] int? postId = null)
         {
-            IEnumerable<Comment> Comments = CommentRepo.GetMany();
-            
-           
-            if (writtenById!=null)
+            IQueryable<Comment> comments = CommentRepo.GetMany();
+
+            if (writtenById != null)
             {
-                Comments = Comments.Where(c => c.UserId == writtenById);
+                comments = comments.Where(c => c.UserId == writtenById);
             }
 
-            if (writtenByName!=null)
+            if (writtenByName != null)
             {
                 var userIds = userRepository.GetMany()
                     .Where(u => u.Username.Equals(writtenByName))
                     .Select(u => u.Id);
-                Comments = Comments.Where(c => userIds.Contains(c.UserId));
-            }
-            if (postId != null)
-            {
-                Comments = Comments.Where(c => c.PostId == postId);
+                comments = comments.Where(c => userIds.Contains(c.UserId));
             }
 
-            return Ok(Comments.ToList());
+            if (postId != null)
+            {
+                comments = comments.Where(c => c.PostId == postId);
+            }
+
+            return Ok(await comments.ToListAsync());
         }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Comment>> DeleteComment([FromRoute] int id)
@@ -78,5 +79,5 @@ namespace WebAPI.Controllers
         }
     }
 
-    
+
 }
