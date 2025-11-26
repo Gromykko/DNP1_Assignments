@@ -1,0 +1,26 @@
+﻿@page "/users/add"
+@using ApiContracts
+@using Services
+@rendermode InteractiveServer
+@inject IUserService UserService
+
+<PageTitle>Add new User</PageTitle>
+
+<h1>Add New User</h1>
+
+<p>Username:</p>
+<input @bind="createUserDto.UserName"/>
+<p>Password: </p>
+<input @bind="createUserDto.Password"/>
+<button class="btn btn-primary" @onclick="AddUser">Add</button>
+@code {
+    private CreateUserDto createUserDto = new CreateUserDto { UserName = "", Password = "" };
+    private int currentCount = 0;
+
+    private async Task AddUser()
+    {
+        await UserService.AddUserAsync(createUserDto);
+        createUserDto = new CreateUserDto { UserName = "", Password = "" };
+    }
+
+}
