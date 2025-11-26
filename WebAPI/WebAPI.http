@@ -1,0 +1,118 @@
+@WebAPI_HostAddress = http://localhost:5299
+
+
+
+###
+POST {{WebAPI_HostAddress}}/users
+Content-Type: application/json
+Accept: application/json
+
+{
+    "userName": "newUser123",
+    "password": "securePassword!"
+}
+###
+POST {{WebAPI_HostAddress}}/users
+Content-Type: application/json
+Accept: application/json
+
+{
+    "userName": "newUser1234",
+    "password": "securePassword!!"
+}
+###
+PATCH {{WebAPI_HostAddress}}/users/2
+Content-Type: application/json
+Accept: application/json
+
+{
+    "newUserName": "updatedUser1234",
+    "newPassword": "newSecurePassword!",
+    "OldUserName": "newUser123",
+    "OldPassword": "securePassword!"
+}
+###
+DELETE {{WebAPI_HostAddress}}/users/1
+Accept: application/json
+###
+GET {{WebAPI_HostAddress}}/users
+Accept: application/json
+###
+GET {{WebAPI_HostAddress}}/users?usernameContains=new
+Accept: application/json
+###
+GET {{WebAPI_HostAddress}}/users/2
+Accept: application/json
+
+
+
+###
+POST {{WebAPI_HostAddress}}/posts
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Title": "newtitle123",
+    "Body": "newBody123",
+    "UserId":"3"
+}
+
+###
+GET {{WebAPI_HostAddress}}/posts
+Accept: application/json
+
+###
+GET {{WebAPI_HostAddress}}/posts/1
+Accept: application/json
+
+###
+GET {{WebAPI_HostAddress}}/posts?writtenById=1
+Accept: application/json
+###
+PATCH {{WebAPI_HostAddress}}/posts/1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Body": "updatedBody",
+    "Title": "updatedTitle"
+}
+###
+DELETE {{WebAPI_HostAddress}}/posts/1
+Accept: application/json
+
+###
+POST {{WebAPI_HostAddress}}/comments
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Body": "new comment body",
+    "UserId": 3,
+    "PostId": 1
+}
+
+###
+GET {{WebAPI_HostAddress}}/comments
+Accept: application/json
+
+###
+GET {{WebAPI_HostAddress}}/comments/1
+Accept: application/json
+
+###
+GET {{WebAPI_HostAddress}}/comments?writtenById=3&writtenByName=updatedUser1235&postId=1
+Accept: application/json
+
+###
+PATCH {{WebAPI_HostAddress}}/comments/1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Body": "updated comment body"
+}
+
+###
+DELETE {{WebAPI_HostAddress}}/comments/1
+Accept: application/json
