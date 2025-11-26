@@ -1,5 +1,8 @@
+using BlazorApp.Auth;
 using BlazorApp.Components;
 using BlazorApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,13 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// builder.Services.AddScoped(sp => new HttpClient
-// {
-//     BaseAddress = new Uri("http://localhost:5299")
-// });
-builder.Services.AddHttpClient<ICommentService, HttpCommentService>(c => c.BaseAddress = new Uri("http://localhost:5299"));
-builder.Services.AddHttpClient<IPostService, HttpPostService>(c => c.BaseAddress = new Uri("http://localhost:5299"));
-builder.Services.AddHttpClient<IUserService, HttpUserService>(c => c.BaseAddress = new Uri("http://localhost:5299"));
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("http://localhost:5299")
+});
+builder.Services.AddScoped<ICommentService, HttpCommentService>();
+builder.Services.AddScoped<IPostService, HttpPostService>();
+builder.Services.AddScoped<IUserService, HttpUserService>();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -24,9 +31,12 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForErrors: true);
+// app.UseStatusCodePagesWithReExecute("/not-found", createScopeForErrors: true);
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 
